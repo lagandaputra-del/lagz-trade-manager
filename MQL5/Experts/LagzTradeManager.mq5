@@ -125,6 +125,8 @@ void OnDeinit(const int reason)
    //--- Clean up GlobalVariables when EA is manually removed (not on TF change/recompile)
    if(reason == REASON_REMOVE)
       LTM_PanelStateDelete();
+   else
+      LTM_PanelStateSave();
 
    //--- Destroy canvas bitmap and remove object from chart
    if(ObjectFind(0, CANVAS_NAME) >= 0)
