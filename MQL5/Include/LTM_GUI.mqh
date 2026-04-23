@@ -11,72 +11,78 @@
 #include <Canvas\Canvas.mqh>
 
 //+------------------------------------------------------------------+
-//| Color constants                                                    |
+//| Color constants  (V2 palette)                                      |
 //+------------------------------------------------------------------+
 // Backgrounds
-#define CLR_BG_DEEP       XRGB(0x07,0x07,0x12)   // near-black navy
-#define CLR_BG_PANEL      XRGB(0x0D,0x0D,0x1E)   // section backgrounds
-#define CLR_BG_INPUT      XRGB(0x16,0x16,0x2E)   // input fields
+#define CLR_BG_DEEP       XRGB(0x0F,0x11,0x1A)   // #0F111A main bg
+#define CLR_BG_PANEL      XRGB(0x1F,0x23,0x2F)   // #1F232F card/section bg
+#define CLR_BG_INPUT      XRGB(0x10,0x14,0x2A)   // #10142A input fields
 // Borders
-#define CLR_BORDER_DIM    XRGB(0x1E,0x1E,0x3C)   // subtle separators
-#define CLR_BORDER_GLOW   XRGB(0x7C,0x3A,0xED)   // purple glow (outer border)
-#define CLR_BORDER_FOCUS  XRGB(0xA7,0x8B,0xFA)   // active field border
+#define CLR_BORDER_DIM    XRGB(0x2A,0x2E,0x40)   // subtle separators
+#define CLR_BORDER_GLOW   XRGB(0x6C,0x4A,0xF3)   // #6C4AF3 accent border
+#define CLR_BORDER_FOCUS  XRGB(0x9C,0x7A,0xFF)   // active field border
 // Text
-#define CLR_TEXT_PRIMARY  XRGB(0xEE,0xF2,0xFF)   // near-white
-#define CLR_TEXT_DIM      XRGB(0x55,0x65,0x96)   // dimmed labels
-#define CLR_TEXT_SECTION  XRGB(0x8B,0x7E,0xBF)   // section header text
+#define CLR_TEXT_PRIMARY  XRGB(0xFF,0xFF,0xFF)   // #FFFFFF
+#define CLR_TEXT_DIM      XRGB(0x8A,0x8F,0xA8)   // #8A8FA8 dimmed labels
+#define CLR_TEXT_SECTION  XRGB(0x8A,0x8F,0xA8)   // section header text
 // Accent
-#define CLR_ACCENT        XRGB(0x7C,0x3A,0xED)   // purple (primary accent)
+#define CLR_ACCENT        XRGB(0x6C,0x4A,0xF3)   // #6C4AF3 purple accent
 #define CLR_ACCENT2       XRGB(0x00,0xD4,0xFF)   // cyan (secondary)
 // Trading
-#define CLR_PROFIT        XRGB(0x10,0xD9,0x8A)   // vivid green
-#define CLR_PROFIT_DIM    XRGB(0x0A,0x28,0x1A)   // dark green card bg
-#define CLR_LOSS          XRGB(0xF2,0x36,0x45)   // vivid red
-#define CLR_LOSS_DIM      XRGB(0x28,0x09,0x10)   // dark red card bg
-#define CLR_WARN          XRGB(0xF5,0xA6,0x23)   // amber (partial close)
+#define CLR_PROFIT        XRGB(0x27,0xD0,0x8F)   // #27D08F BUY green
+#define CLR_PROFIT_DIM    XRGB(0x0D,0x22,0x18)   // dark green card bg
+#define CLR_LOSS          XRGB(0xFF,0x33,0x44)   // #FF3344 SELL red
+#define CLR_LOSS_DIM      XRGB(0x28,0x0A,0x10)   // dark red card bg
+#define CLR_WARN          XRGB(0xFF,0x98,0x44)   // #FF9844 orange (partial close)
 // Buttons
-#define CLR_NEUTRAL       XRGB(0x22,0x22,0x48)   // neutral button bg
-#define CLR_AUTO_OFF      XRGB(0x18,0x18,0x30)   // disabled toggle bg
-#define CLR_BTN_BE        XRGB(0x1E,0x40,0x7A)   // SET BE button (blue-navy)
+#define CLR_NEUTRAL       XRGB(0x28,0x2C,0x40)   // neutral button bg
+#define CLR_AUTO_OFF      XRGB(0x1A,0x1E,0x2C)   // disabled toggle bg
+#define CLR_BTN_BE        XRGB(0x1E,0x40,0x7A)   // #1E407A SET BE blue
+#define CLR_BTN_DANGER    XRGB(0xA7,0x44,0x44)   // #A74444 CLOSE ALL danger
 #define CLR_BTN_TEXT_DK   XRGB(0x00,0x00,0x00)   // black text on bright buttons
 #define CLR_WHITE         XRGB(0xFF,0xFF,0xFF)
 
 //+------------------------------------------------------------------+
-//| Layout constants  (480px wide — designed for 1440p+)             |
+//| Layout constants  (400px wide — V2)                               |
 //+------------------------------------------------------------------+
 #define CANVAS_NAME       "LTM_Canvas"
-#define PANEL_W           480
-#define PANEL_TITLE_H     44
-#define PANEL_DASH_H      150
-#define PANEL_ORDER_H     226   // 16hdr + 36+36+36 fields + 62 BUY/SELL + 40 LIMIT
-#define PANEL_MANAGE_H    156   // 16hdr + 44 CLOSE_ALL + 34 SET_TP + 36 partial + 26 accord
-#define PANEL_BE_H        132   // 16hdr + 32 offset-field + 56 SET-BE + 28 auto-BE
-#define PANEL_ACCORD_H    62
-#define PANEL_STATUS_H    28
-#define PANEL_PAD_X       14
-#define PANEL_PAD_Y       6
+#define PANEL_W           400
+#define PANEL_TITLE_H     40
+#define PANEL_COMPACT_H   145  // compact mode total height
+#define PANEL_OVERVIEW_H  80   // 2-row account grid (3-line col + PAD_Y=10)
+#define PANEL_TABS_H      36   // MARKET/PENDING tab bar
+#define PANEL_INPUT_H     122  // 4 rows: lot + sl/tp + price + margin
+#define PANEL_BUYSELL_H   56   // BUY/SELL buttons (always visible)
+#define PANEL_QUICK_H     122  // sub-lbl + 28 partial row + sub-lbl + 28 SET BE + PAD_Y
+#define PANEL_MANAGE_H    100  // PAD_Y + 34 CLOSE ALL + 10 + 34 CLOSE BUY/SELL
+#define PANEL_BE_H        116  // PAD_Y + 26 toggle + 10 + 26 after + 10 + 26 ofs
+#define PANEL_STATUS_H    26
+#define PANEL_SEC_H       28   // collapsible section header height
+#define PANEL_PAD_X       10
+#define PANEL_PAD_Y       10
 #define PANEL_XDIST       10
 #define PANEL_YDIST       30
 
 // Input field and button heights
-#define FIELD_H           28    // input fields
-#define BTN_H_LG          52    // BUY / SELL (and SET BE — same prominence)
-#define BTN_H_MD          38    // BUY LIMIT / SELL LIMIT / CLOSE ALL
-#define BTN_H_SM          30    // Partial close buttons
-#define BTN_H_XS          26    // Accordion toggle
+#define FIELD_H           26    // input fields
+#define BTN_H_LG          56    // BUY / SELL primary buttons
+#define BTN_H_MD          34    // CLOSE ALL / CLOSE BUY / CLOSE SELL
+#define BTN_H_SM          28    // partial close / SET BE / small actions
+#define BTN_H_XS          22    // +/- increment buttons
+#define BTN_PLUSMINUS_W   24    // width of +/- buttons
 
 //+------------------------------------------------------------------+
-//| Font constants                                                     |
+//| Font constants  (V2 — all Tahoma)                                  |
 //+------------------------------------------------------------------+
-#define FONT_LABEL        "Arial"
-#define FONT_LABEL_BOLD   "Arial Bold"
-#define FONT_MONO         "Courier New"
-#define FSIZE_TITLE       -120
-#define FSIZE_SECTION     -90
-#define FSIZE_LABEL       -100
-#define FSIZE_VALUE       -110
-#define FSIZE_PL          -120
-#define FSIZE_BTN         -100
+#define FONT_LABEL        "Tahoma"
+#define FONT_LABEL_BOLD   "Tahoma Bold"
+#define FONT_MONO         "Tahoma"
+#define FSIZE_TITLE       -110
+#define FSIZE_SECTION     -85
+#define FSIZE_LABEL       -90
+#define FSIZE_VALUE       -100
+#define FSIZE_PL          -110
+#define FSIZE_BTN         -95
 
 //+------------------------------------------------------------------+
 //| Active input field enum                                            |
@@ -114,6 +120,13 @@ struct PanelState {
    bool    confirmPartial;
    bool    manageOwnOnly;
    ENUM_ACTIVE_FIELD activeField;
+   // V2 fields
+   bool    tabMarket;        // true=MARKET, false=PENDING
+   bool    collapseOverview;
+   bool    collapseInput;
+   bool    collapseQuick;
+   bool    collapseManage;
+   bool    collapseBE;
 };
 
 //+------------------------------------------------------------------+
@@ -127,7 +140,7 @@ struct HitRegion {
 //+------------------------------------------------------------------+
 //| Forward declarations                                               |
 //+------------------------------------------------------------------+
-void LTM_DrawDashboard(CCanvas &canvas, int yTop);
+void LTM_DrawAccountOverview(int yTop);
 void LTM_OpenBuy();
 void LTM_OpenSell();
 void LTM_OpenBuyLimit();
@@ -147,18 +160,20 @@ void LTM_CreateCanvas()
    int totalH;
    if(g_panel.panelMinimized)
    {
-      totalH = PANEL_TITLE_H + PANEL_STATUS_H;
+      totalH = PANEL_COMPACT_H;
    }
    else
    {
+      int inputH = PANEL_INPUT_H + (g_panel.tabMarket ? 0 : FIELD_H + 6);
       totalH = PANEL_TITLE_H
-             + PANEL_DASH_H
-             + PANEL_ORDER_H
-             + PANEL_MANAGE_H
-             + PANEL_BE_H
+             + PANEL_SEC_H + (g_panel.collapseOverview ? 0 : PANEL_OVERVIEW_H)
+             + PANEL_TABS_H
+             + PANEL_SEC_H + (g_panel.collapseInput    ? 0 : inputH)
+             + PANEL_BUYSELL_H
+             + PANEL_SEC_H + (g_panel.collapseQuick    ? 0 : PANEL_QUICK_H)
+             + PANEL_SEC_H + (g_panel.collapseManage   ? 0 : PANEL_MANAGE_H)
+             + PANEL_SEC_H + (g_panel.collapseBE       ? 0 : PANEL_BE_H)
              + PANEL_STATUS_H;
-      if(g_panel.accordionOpen)
-         totalH += PANEL_ACCORD_H;
    }
 
    if(totalH == g_panelH && ObjectFind(0, CANVAS_NAME) >= 0)
@@ -259,6 +274,12 @@ void LTM_PanelStateSave()
    GlobalVariableSet(p + "ABEon",   g_panel.autoBEEnabled  ? 1.0 : 0.0);
    GlobalVariableSet(p + "Mini",    g_panel.panelMinimized ? 1.0 : 0.0);
    GlobalVariableSet(p + "Accord",  g_panel.accordionOpen  ? 1.0 : 0.0);
+   GlobalVariableSet(p + "TabMkt",  g_panel.tabMarket        ? 1.0 : 0.0);
+   GlobalVariableSet(p + "ColOv",   g_panel.collapseOverview ? 1.0 : 0.0);
+   GlobalVariableSet(p + "ColIn",   g_panel.collapseInput    ? 1.0 : 0.0);
+   GlobalVariableSet(p + "ColQk",   g_panel.collapseQuick    ? 1.0 : 0.0);
+   GlobalVariableSet(p + "ColMg",   g_panel.collapseManage   ? 1.0 : 0.0);
+   GlobalVariableSet(p + "ColBE",   g_panel.collapseBE       ? 1.0 : 0.0);
 }
 
 bool LTM_PanelStateLoad()
@@ -280,6 +301,13 @@ bool LTM_PanelStateLoad()
    GlobalVariableGet(p + "ABEon",   v); g_panel.autoBEEnabled  = (v >= 0.5);
    GlobalVariableGet(p + "Mini",    v); g_panel.panelMinimized = (v >= 0.5);
    GlobalVariableGet(p + "Accord",  v); g_panel.accordionOpen  = (v >= 0.5);
+   // V2 fields — default if key absent
+   if(GlobalVariableCheck(p + "TabMkt")) { GlobalVariableGet(p + "TabMkt", v); g_panel.tabMarket        = (v >= 0.5); } else g_panel.tabMarket        = true;
+   if(GlobalVariableCheck(p + "ColOv"))  { GlobalVariableGet(p + "ColOv",  v); g_panel.collapseOverview = (v >= 0.5); } else g_panel.collapseOverview = false;
+   if(GlobalVariableCheck(p + "ColIn"))  { GlobalVariableGet(p + "ColIn",  v); g_panel.collapseInput    = (v >= 0.5); } else g_panel.collapseInput    = false;
+   if(GlobalVariableCheck(p + "ColQk"))  { GlobalVariableGet(p + "ColQk",  v); g_panel.collapseQuick    = (v >= 0.5); } else g_panel.collapseQuick    = false;
+   if(GlobalVariableCheck(p + "ColMg"))  { GlobalVariableGet(p + "ColMg",  v); g_panel.collapseManage   = (v >= 0.5); } else g_panel.collapseManage   = false;
+   if(GlobalVariableCheck(p + "ColBE"))  { GlobalVariableGet(p + "ColBE",  v); g_panel.collapseBE       = (v >= 0.5); } else g_panel.collapseBE       = false;
    return true;
 }
 
@@ -299,18 +327,27 @@ void LTM_PanelStateDelete()
    GlobalVariableDel(p + "ABEon");
    GlobalVariableDel(p + "Mini");
    GlobalVariableDel(p + "Accord");
+   GlobalVariableDel(p + "TabMkt");
+   GlobalVariableDel(p + "ColOv");
+   GlobalVariableDel(p + "ColIn");
+   GlobalVariableDel(p + "ColQk");
+   GlobalVariableDel(p + "ColMg");
+   GlobalVariableDel(p + "ColBE");
 }
 
 //+------------------------------------------------------------------+
 //| Draw helpers                                                       |
 //+------------------------------------------------------------------+
 
-void LTM_DrawSectionLabel(int y, const string label)
+void LTM_DrawSectionHeader(int y, const string label, const string action, bool collapsed)
 {
-   g_canvas.FillRectangle(0, y, PANEL_W, y + 16, CLR_BG_PANEL);
-   g_canvas.FillRectangle(0, y, PANEL_W, y + 1,  CLR_BORDER_DIM);
-   g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
-   g_canvas.TextOut(PANEL_PAD_X, y + 8, label, CLR_TEXT_SECTION, TA_LEFT | TA_VCENTER);
+   g_canvas.FillRectangle(0, y, PANEL_W, y + PANEL_SEC_H, CLR_BG_PANEL);
+   g_canvas.FillRectangle(0, y, PANEL_W, y + 1, CLR_BORDER_DIM);
+   string arrow = collapsed ? ">" : "v";
+   g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_LABEL, FW_BOLD, 0);
+   g_canvas.TextOut(PANEL_PAD_X, y + PANEL_SEC_H/2, label, CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
+   g_canvas.TextOut(PANEL_W - PANEL_PAD_X, y + PANEL_SEC_H/2, arrow, CLR_TEXT_DIM, TA_RIGHT | TA_VCENTER);
+   LTM_HitRegionAdd(0, y, PANEL_W, y + PANEL_SEC_H, action);
 }
 
 void LTM_DrawButton(int x, int y, int w, int h,
@@ -350,52 +387,102 @@ void LTM_DrawField(int x, int y, int w, int h,
 }
 
 //+------------------------------------------------------------------+
-//| Title bar                                                          |
+//| Title bar (V2)                                                     |
 //+------------------------------------------------------------------+
 void LTM_DrawTitleBar()
 {
    int h = PANEL_TITLE_H;
-
    g_canvas.FillRectangle(0, 0, PANEL_W, h, CLR_BG_DEEP);
-   // Purple accent bottom border (2px)
    g_canvas.FillRectangle(0, h - 2, PANEL_W, h, CLR_ACCENT);
 
    g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_TITLE, FW_BOLD, 0);
-   g_canvas.TextOut(PANEL_PAD_X, h / 2, "LAGZ TRADE MANAGER",
-                    CLR_ACCENT, TA_LEFT | TA_VCENTER);
+   g_canvas.TextOut(PANEL_PAD_X, h / 2, "LAGZ TRADE MANAGER", CLR_ACCENT, TA_LEFT | TA_VCENTER);
 
-   int btnW = 28;
-   int btnX = PANEL_W - btnW - 4;
-   int btnY = 4;
-   int btnH = h - 8;
-   string minLbl = g_panel.panelMinimized ? "+" : "-";
+   int btnW = 26, btnH = h - 8, btnY = 4;
+   int minBtnX = PANEL_W - btnW - 4;
+   int gearX   = minBtnX - btnW - 6;
 
-   g_canvas.FillRectangle(btnX, btnY, btnX + btnW, btnY + btnH, CLR_BG_PANEL);
-   g_canvas.Rectangle(btnX, btnY, btnX + btnW, btnY + btnH, CLR_BORDER_DIM);
+   // Settings icon (cosmetic)
+   g_canvas.FillRectangle(gearX, btnY, gearX + btnW, btnY + btnH, CLR_BG_PANEL);
+   g_canvas.Rectangle(gearX, btnY, gearX + btnW, btnY + btnH, CLR_BORDER_DIM);
+   g_canvas.FontSet(FONT_LABEL, FSIZE_BTN, FW_NORMAL, 0);
+   g_canvas.TextOut(gearX + btnW / 2, btnY + btnH / 2, "*", CLR_TEXT_DIM, TA_CENTER | TA_VCENTER);
+
+   // Minimize button
+   g_canvas.FillRectangle(minBtnX, btnY, minBtnX + btnW, btnY + btnH, CLR_BG_PANEL);
+   g_canvas.Rectangle(minBtnX, btnY, minBtnX + btnW, btnY + btnH, CLR_BORDER_DIM);
    g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_BTN, FW_BOLD, 0);
-   g_canvas.TextOut(btnX + btnW / 2, btnY + btnH / 2,
-                    minLbl, CLR_TEXT_PRIMARY, TA_CENTER | TA_VCENTER);
-   LTM_HitRegionAdd(btnX, btnY, btnX + btnW, btnY + btnH, "MINIMIZE");
+   g_canvas.TextOut(minBtnX + btnW / 2, btnY + btnH / 2, "-", CLR_TEXT_PRIMARY, TA_CENTER | TA_VCENTER);
+   LTM_HitRegionAdd(minBtnX, btnY, minBtnX + btnW, btnY + btnH, "MINIMIZE");
+}
 
-   if(g_panel.panelMinimized)
+//+------------------------------------------------------------------+
+//| Compact mode (replaces minimize title-bar-only behavior)           |
+//+------------------------------------------------------------------+
+void LTM_DrawCompactMode()
+{
+   int px = PANEL_PAD_X;
+   int h  = PANEL_TITLE_H;
+
+   // Title row
+   g_canvas.FillRectangle(0, 0, PANEL_W, h, CLR_BG_DEEP);
+   g_canvas.FillRectangle(0, h - 2, PANEL_W, h, CLR_ACCENT);
+   g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_TITLE, FW_BOLD, 0);
+   g_canvas.TextOut(px, h / 2, "LAGZ TRADE MANAGER", CLR_ACCENT, TA_LEFT | TA_VCENTER);
+
+   int btnW = 26, btnH = h - 8, btnY = 4;
+   int minBtnX = PANEL_W - btnW - 4;
+   g_canvas.FillRectangle(minBtnX, btnY, minBtnX + btnW, btnY + btnH, CLR_BG_PANEL);
+   g_canvas.Rectangle(minBtnX, btnY, minBtnX + btnW, btnY + btnH, CLR_BORDER_DIM);
+   g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_BTN, FW_BOLD, 0);
+   g_canvas.TextOut(minBtnX + btnW / 2, btnY + btnH / 2, "+", CLR_TEXT_PRIMARY, TA_CENTER | TA_VCENTER);
+   LTM_HitRegionAdd(minBtnX, btnY, minBtnX + btnW, btnY + btnH, "MINIMIZE");
+
+   // Account 4-col row
+   int y = h + 4;
+   g_canvas.FillRectangle(0, h, PANEL_W, h + 42, CLR_BG_PANEL);
+
+   double balance    = AccountInfoDouble(ACCOUNT_BALANCE);
+   double equity     = AccountInfoDouble(ACCOUNT_EQUITY);
+   double freeMargin = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double runPL      = 0.0;
+   for(int i = 0; i < PositionsTotal(); i++)
    {
-      double runPL = 0.0;
-      for(int i = 0; i < PositionsTotal(); i++)
-      {
-         ulong ticket = PositionGetTicket(i);
-         if(ticket == 0) continue;
-         if(PositionGetString(POSITION_SYMBOL) != _Symbol) continue;
-         if(g_panel.manageOwnOnly && PositionGetInteger(POSITION_MAGIC) != InpMagic) continue;
-         runPL += PositionGetDouble(POSITION_PROFIT)
-                + PositionGetDouble(POSITION_SWAP);
-      }
-
-      string plStr = _Symbol + "  " + (runPL >= 0 ? "+" : "") + DoubleToString(runPL, 2);
-      uint   plClr = (runPL >= 0) ? CLR_PROFIT : CLR_LOSS;
-
-      g_canvas.FontSet(FONT_MONO, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(btnX - 4, h / 2, plStr, plClr, TA_RIGHT | TA_VCENTER);
+      ulong ticket = PositionGetTicket(i);
+      if(ticket == 0) continue;
+      if(PositionGetString(POSITION_SYMBOL) != _Symbol) continue;
+      if(g_panel.manageOwnOnly && PositionGetInteger(POSITION_MAGIC) != InpMagic) continue;
+      runPL += PositionGetDouble(POSITION_PROFIT) + PositionGetDouble(POSITION_SWAP);
    }
+
+   string colLabels[] = {"Bal", "Eq", "Free", "PNL"};
+   string colVals[]   = {
+      DoubleToString(balance, 2),
+      DoubleToString(equity, 2),
+      DoubleToString(freeMargin, 2),
+      (runPL >= 0 ? "+" : "") + DoubleToString(runPL, 2)
+   };
+   uint plClr = (runPL >= 0) ? CLR_PROFIT : CLR_LOSS;
+   uint colClrs[] = {CLR_TEXT_PRIMARY, CLR_TEXT_PRIMARY, CLR_TEXT_PRIMARY, plClr};
+
+   int colW = (PANEL_W - 2 * px) / 4;
+   for(int c = 0; c < 4; c++)
+   {
+      int cx = px + c * colW;
+      g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
+      g_canvas.TextOut(cx, y, colLabels[c], CLR_TEXT_DIM, TA_LEFT | TA_TOP);
+      g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_LABEL, FW_BOLD, 0);
+      g_canvas.TextOut(cx, y + 14, colVals[c], colClrs[c], TA_LEFT | TA_TOP);
+   }
+   y += 42;
+
+   // BUY / SELL buttons
+   int gap = 4, bW = (PANEL_W - 2 * px - gap) / 2;
+   LTM_DrawButton(px,          y, bW, BTN_H_LG, "BUY",  CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY");
+   LTM_DrawButton(px + bW + gap, y, bW, BTN_H_LG, "SELL", CLR_LOSS,   CLR_WHITE,       "SELL");
+   y += BTN_H_LG;
+
+   LTM_DrawStatusBar(y);
 }
 
 //+------------------------------------------------------------------+
@@ -419,232 +506,251 @@ void LTM_DrawStatusBar(int y)
 }
 
 //+------------------------------------------------------------------+
-//| Order section                                                      |
+//| Trade Mode Tabs (Step 7)                                           |
 //+------------------------------------------------------------------+
-void LTM_DrawOrderSection(int yTop)
+void LTM_DrawTradeTabs(int yTop)
 {
    int y  = yTop;
    int px = PANEL_PAD_X;
+   int tabW = (PANEL_W - 2 * px) / 2;
+   int h    = PANEL_TABS_H;
 
-   LTM_DrawSectionLabel(y, "-- ORDER --");
-   y += 16;
+   g_canvas.FillRectangle(0, y, PANEL_W, y + h, CLR_BG_DEEP);
+   g_canvas.FillRectangle(0, y, PANEL_W, y + 1, CLR_BORDER_DIM);
 
-   // --- Row 1: Lot / Risk% field + mode toggle ---
+   // MARKET tab
+   {
+      bool   active = g_panel.tabMarket;
+      uint   bg     = active ? CLR_BG_PANEL      : CLR_BG_DEEP;
+      uint   fg     = active ? CLR_TEXT_PRIMARY   : CLR_TEXT_DIM;
+      g_canvas.FillRectangle(px, y + 2, px + tabW, y + h - 2, bg);
+      if(active) g_canvas.FillRectangle(px, y + h - 3, px + tabW, y + h - 1, CLR_ACCENT);
+      g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_LABEL, FW_BOLD, 0);
+      g_canvas.TextOut(px + tabW / 2, y + h / 2, "MARKET", fg, TA_CENTER | TA_VCENTER);
+      LTM_HitRegionAdd(px, y, px + tabW, y + h, "TAB_MARKET");
+   }
+
+   // PENDING tab
+   {
+      bool   active = !g_panel.tabMarket;
+      uint   bg     = active ? CLR_BG_PANEL      : CLR_BG_DEEP;
+      uint   fg     = active ? CLR_TEXT_PRIMARY   : CLR_TEXT_DIM;
+      g_canvas.FillRectangle(px + tabW, y + 2, px + 2 * tabW, y + h - 2, bg);
+      if(active) g_canvas.FillRectangle(px + tabW, y + h - 3, px + 2 * tabW, y + h - 1, CLR_ACCENT);
+      g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_LABEL, FW_BOLD, 0);
+      g_canvas.TextOut(px + tabW + tabW / 2, y + h / 2, "PENDING", fg, TA_CENTER | TA_VCENTER);
+      LTM_HitRegionAdd(px + tabW, y, px + 2 * tabW, y + h, "TAB_PENDING");
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Trade Input section (Step 8)                                       |
+//+------------------------------------------------------------------+
+void LTM_DrawTradeInput(int yTop)
+{
+   int y    = yTop + 6;
+   int px   = PANEL_PAD_X;
+   int bPM  = BTN_PLUSMINUS_W;   // 24 — +/- button width
+   int gap  = 4;
+   int lblW = 30;                 // row label width
+   int togW = 52;                 // toggle button width
+   // field fills remaining space
+   int fldW = PANEL_W - px - lblW - bPM - gap - bPM - gap - togW - gap - px;
+
+   g_canvas.FillRectangle(0, yTop, PANEL_W, yTop + PANEL_INPUT_H + (g_panel.tabMarket ? 0 : FIELD_H + 6), CLR_BG_DEEP);
+
+   // Row 1: Lot / Risk% with +/- and mode toggle
    {
       string lotLbl = g_panel.lotModeRisk ? "Risk%" : "Lot";
       g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
       g_canvas.TextOut(px, y + FIELD_H / 2, lotLbl, CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
 
-      int labelW    = 50;
-      int fieldX    = px + labelW;
-      int toggleW   = 72;
-      int fieldW    = PANEL_W - px - fieldX - toggleW - 4;
+      int minX  = px + lblW;
+      int fldX  = minX + bPM + gap;
+      int plusX = fldX + fldW + gap;
+      int togX  = plusX + bPM + gap;
 
-      LTM_DrawField(fieldX, y, fieldW, FIELD_H, g_panel.lotValue, FIELD_LOT);
-
-      string toggleLbl = g_panel.lotModeRisk ? "RISK %" : "FIXED";
-      uint   toggleBg  = g_panel.lotModeRisk ? CLR_NEUTRAL : CLR_AUTO_OFF;
-      LTM_DrawButton(fieldX + fieldW + 4, y, toggleW, FIELD_H,
-                     toggleLbl, toggleBg, CLR_WHITE, "TOGGLE_LOT_MODE");
-   }
-   y += FIELD_H + 8;
-
-   // --- Row 2: SL / TP fields + pips/price toggle ---
-   {
-      // Layout: [SL lbl][SL field][gap][TP lbl][TP field][gap][toggle]
-      int lblW     = 28;   // "SL" or "TP" label width
-      int toggleW  = 58;
-      int gap      = 6;
-      int eachW    = (PANEL_W - 2*px - 2*lblW - toggleW - 2*gap) / 2;
-
-      int slLblX   = px;
-      int slFieldX = slLblX + lblW;
-      int tpLblX   = slFieldX + eachW + gap;
-      int tpFieldX = tpLblX + lblW;
-      int toggleX  = PANEL_W - px - toggleW;
-
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(slLblX, y + FIELD_H / 2, "SL", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-      LTM_DrawField(slFieldX, y, eachW, FIELD_H, g_panel.slValue, FIELD_SL);
-
-      g_canvas.TextOut(tpLblX, y + FIELD_H / 2, "TP", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-      LTM_DrawField(tpFieldX, y, eachW, FIELD_H, g_panel.tpValue, FIELD_TP);
-
-      string modeLbl = g_panel.slTpModePips ? "pips" : "price";
-      LTM_DrawButton(toggleX, y, toggleW, FIELD_H,
-                     modeLbl, CLR_AUTO_OFF, CLR_TEXT_DIM, "TOGGLE_SLTP_MODE");
-   }
-   y += FIELD_H + 8;
-
-   // --- Row 3: Pending price field ---
-   {
-      int lblW   = 52;
-      int fieldX = px + lblW;
-      int fieldW = PANEL_W - fieldX - px;
-
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(px, y + FIELD_H / 2, "Price", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-      LTM_DrawField(fieldX, y, fieldW, FIELD_H, g_panel.pendingPrice, FIELD_PENDING_PRICE);
-   }
-   y += FIELD_H + 8;
-
-   // --- Row 4: BUY / SELL ---
-   {
-      int gap  = 6;
-      int btnW = (PANEL_W - 2*px - gap) / 2;
-
-      LTM_DrawButton(px,           y, btnW, BTN_H_LG, "BUY",
-                     CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY");
-      LTM_DrawButton(px + btnW + gap, y, btnW, BTN_H_LG, "SELL",
-                     CLR_LOSS,   CLR_WHITE,       "SELL");
-   }
-   y += BTN_H_LG + 10;
-
-   // --- Row 5: BUY LIMIT / SELL LIMIT ---
-   {
-      int gap  = 6;
-      int btnW = (PANEL_W - 2*px - gap) / 2;
-
-      LTM_DrawButton(px,           y, btnW, BTN_H_MD, "BUY LIMIT",
-                     CLR_PROFIT_DIM, CLR_PROFIT, "BUY_LIMIT");
-      LTM_DrawButton(px + btnW + gap, y, btnW, BTN_H_MD, "SELL LIMIT",
-                     CLR_LOSS_DIM,   CLR_LOSS,   "SELL_LIMIT");
-   }
-}
-
-//+------------------------------------------------------------------+
-//| Manage section                                                     |
-//+------------------------------------------------------------------+
-void LTM_DrawManageSection(int yTop)
-{
-   int y  = yTop;
-   int px = PANEL_PAD_X;
-
-   LTM_DrawSectionLabel(y, "-- MANAGE --");
-   y += 16;
-
-   // --- Row 1: CLOSE ALL full-width ---
-   LTM_DrawButton(px, y, PANEL_W - 2*px, BTN_H_MD,
-                  "CLOSE ALL", CLR_LOSS, CLR_WHITE, "CLOSE_ALL");
-   y += BTN_H_MD + 6;
-
-   // --- Row 2: SET TP label + field + submit button ---
-   {
-      int lblW   = 62;   // "SET TP" label
-      int arrowW = 44;   // "|>" submit button
-      int fieldW = PANEL_W - 2*px - lblW - arrowW - 4;
-
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(px, y + FIELD_H / 2, "SET TP", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-
-      int fieldX = px + lblW;
-      LTM_DrawField(fieldX, y, fieldW, FIELD_H, g_panel.setTPValue, FIELD_SET_TP);
-      LTM_DrawButton(fieldX + fieldW + 4, y, arrowW, FIELD_H,
-                     "|>", CLR_NEUTRAL, CLR_WHITE, "SET_TP");
+      LTM_DrawButton(minX, y, bPM,  FIELD_H, "-",   CLR_NEUTRAL,  CLR_WHITE,    "LOT_MINUS");
+      LTM_DrawField (fldX, y, fldW, FIELD_H, g_panel.lotValue, FIELD_LOT);
+      LTM_DrawButton(plusX, y, bPM, FIELD_H, "+",   CLR_NEUTRAL,  CLR_WHITE,    "LOT_PLUS");
+      string tLbl = g_panel.lotModeRisk ? "RISK%" : "FIXED";
+      LTM_DrawButton(togX,  y, togW, FIELD_H, tLbl, CLR_AUTO_OFF, CLR_TEXT_DIM, "TOGGLE_LOT_MODE");
    }
    y += FIELD_H + 6;
 
-   // --- Row 3: Partial close 25 / 50 / 75 / 80 ---
+   // Row 2: SL with +/- and pips/price toggle
    {
-      int gap  = 4;
-      int btnW = (PANEL_W - 2*px - 3*gap) / 4;
+      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
+      g_canvas.TextOut(px, y + FIELD_H / 2, "SL", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
 
-      LTM_DrawButton(px,                 y, btnW, BTN_H_SM,
-                     "25%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_25");
-      LTM_DrawButton(px + (btnW+gap),    y, btnW, BTN_H_SM,
-                     "50%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_50");
-      LTM_DrawButton(px + 2*(btnW+gap),  y, btnW, BTN_H_SM,
-                     "75%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_75");
-      LTM_DrawButton(px + 3*(btnW+gap),  y, btnW, BTN_H_SM,
-                     "80%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_80");
+      int minX  = px + lblW;
+      int fldX  = minX + bPM + gap;
+      int plusX = fldX + fldW + gap;
+      int togX  = plusX + bPM + gap;
+
+      LTM_DrawButton(minX, y, bPM,  FIELD_H, "-",   CLR_NEUTRAL,  CLR_WHITE,    "SL_MINUS");
+      LTM_DrawField (fldX, y, fldW, FIELD_H, g_panel.slValue, FIELD_SL);
+      LTM_DrawButton(plusX, y, bPM, FIELD_H, "+",   CLR_NEUTRAL,  CLR_WHITE,    "SL_PLUS");
+      string modeLbl = g_panel.slTpModePips ? "pips" : "price";
+      LTM_DrawButton(togX,  y, togW, FIELD_H, modeLbl, CLR_AUTO_OFF, CLR_TEXT_DIM, "TOGGLE_SLTP_MODE");
    }
-   y += BTN_H_SM + 6;
+   y += FIELD_H + 6;
 
-   // --- Row 4: Accordion toggle ---
+   // Row 3: TP with +/- (same field width, no toggle on right)
    {
-      string accordLbl = g_panel.accordionOpen ? "^ Less" : "v More";
-      LTM_DrawButton(px, y, PANEL_W - 2*px, BTN_H_XS,
-                     accordLbl, CLR_AUTO_OFF, CLR_TEXT_DIM, "TOGGLE_ACCORD");
+      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
+      g_canvas.TextOut(px, y + FIELD_H / 2, "TP", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
+
+      int minX  = px + lblW;
+      int fldX  = minX + bPM + gap;
+      int plusX = fldX + fldW + gap;
+
+      LTM_DrawButton(minX, y, bPM,  FIELD_H, "-", CLR_NEUTRAL, CLR_WHITE, "TP_MINUS");
+      LTM_DrawField (fldX, y, fldW, FIELD_H, g_panel.tpValue, FIELD_TP);
+      LTM_DrawButton(plusX, y, bPM, FIELD_H, "+", CLR_NEUTRAL, CLR_WHITE, "TP_PLUS");
+   }
+   y += FIELD_H + 6;
+
+   // Row 4: Price (PENDING mode only)
+   if(!g_panel.tabMarket)
+   {
+      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
+      g_canvas.TextOut(px, y + FIELD_H / 2, "Price", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
+      int priceFieldW = PANEL_W - px - lblW - px;
+      LTM_DrawField(px + lblW, y, priceFieldW, FIELD_H, g_panel.pendingPrice, FIELD_PENDING_PRICE);
    }
 }
 
 //+------------------------------------------------------------------+
-//| Breakeven section                                                  |
+//| BUY / SELL buttons — always visible (Step 9)                      |
 //+------------------------------------------------------------------+
-void LTM_DrawBESection(int yTop)
+void LTM_DrawBuySellButtons(int yTop)
 {
-   int y  = yTop;
-   int px = PANEL_PAD_X;
+   int px  = PANEL_PAD_X;
+   int gap = 4;
+   int bW  = (PANEL_W - 2 * px - gap) / 2;
 
-   LTM_DrawSectionLabel(y, "-- BREAKEVEN --");
-   y += 16;
+   g_canvas.FillRectangle(0, yTop, PANEL_W, yTop + BTN_H_LG, CLR_BG_DEEP);
 
-   // --- Row 1: BE offset field ---
+   if(g_panel.tabMarket)
    {
-      int lblW   = 100;   // "Offset(pips)" label
-      int fieldW = PANEL_W - 2*px - lblW;
-
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(px, y + FIELD_H / 2, "Offset(pips)", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-
-      LTM_DrawField(px + lblW, y, fieldW, FIELD_H, g_panel.beOffset, FIELD_BE_OFFSET);
+      LTM_DrawButton(px,             yTop, bW, BTN_H_LG, "BUY",       CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY");
+      LTM_DrawButton(px + bW + gap,  yTop, bW, BTN_H_LG, "SELL",      CLR_LOSS,   CLR_WHITE,       "SELL");
    }
-   y += FIELD_H + 4;
-
-   // --- Row 2: SET BREAKEVEN — full-width, same prominence as BUY/SELL ---
-   LTM_DrawButton(px, y, PANEL_W - 2*px, BTN_H_LG,
-                  "SET BREAKEVEN", CLR_BTN_BE, CLR_WHITE, "SET_BE");
-   y += BTN_H_LG + 4;
-
-   // --- Row 3: Auto BE toggle + After + Offset fields ---
+   else
    {
-      bool   abeOn  = g_panel.autoBEEnabled;
-      string abeLbl = abeOn ? "ON" : "OFF";
-      uint   abeBg  = abeOn ? CLR_NEUTRAL : CLR_AUTO_OFF;
-      uint   abeFg  = abeOn ? CLR_PROFIT  : CLR_TEXT_DIM;
-
-      int toggleW     = 50;
-      int afterLblW   = 44;
-      int afterFieldW = 58;
-      int ofsLblW     = 44;
-      int ofsFieldW   = PANEL_W - px - toggleW - 6 - afterLblW - 4 - afterFieldW - 6 - ofsLblW - 4 - 6 - px;
-
-      LTM_DrawButton(px, y, toggleW, FIELD_H, abeLbl, abeBg, abeFg, "TOGGLE_AUTO_BE");
-
-      int cur = px + toggleW + 6;
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(cur, y + FIELD_H / 2, "After", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-      cur += afterLblW + 4;
-
-      LTM_DrawField(cur, y, afterFieldW, FIELD_H, g_panel.autoBeAfter, FIELD_AUTO_BE_AFTER);
-      cur += afterFieldW + 6;
-
-      g_canvas.TextOut(cur, y + FIELD_H / 2, "+Ofs:", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-      cur += ofsLblW + 4;
-
-      if(ofsFieldW < 24) ofsFieldW = 24;
-      LTM_DrawField(cur, y, ofsFieldW, FIELD_H, g_panel.autoBeOfs, FIELD_AUTO_BE_OFFSET);
+      LTM_DrawButton(px,             yTop, bW, BTN_H_LG, "BUY LIMIT",  CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY_LIMIT");
+      LTM_DrawButton(px + bW + gap,  yTop, bW, BTN_H_LG, "SELL LIMIT", CLR_LOSS,   CLR_WHITE,       "SELL_LIMIT");
    }
 }
 
 //+------------------------------------------------------------------+
-//| Accordion — Close Buy / Close Sell                                 |
+//| Quick Actions (Step 10)                                            |
 //+------------------------------------------------------------------+
-void LTM_DrawAccordion(int yTop)
+void LTM_DrawQuickActions(int yTop)
 {
    int y  = yTop + 6;
    int px = PANEL_PAD_X;
-   int gap  = 4;
-   int btnW = (PANEL_W - 2*px - gap) / 2;
 
-   LTM_DrawButton(px,           y, btnW, BTN_H_MD,
-                  "CLOSE BUYS", CLR_PROFIT_DIM, CLR_PROFIT, "CLOSE_BUY");
-   LTM_DrawButton(px + btnW + gap, y, btnW, BTN_H_MD,
-                  "CLOSE SELLS", CLR_LOSS_DIM, CLR_LOSS, "CLOSE_SELL");
+   g_canvas.FillRectangle(0, yTop, PANEL_W, yTop + PANEL_QUICK_H, CLR_BG_DEEP);
+
+   // Row 1: 25% | 50% | 75% | 80%
+   {
+      int gap = 4;
+      int bW  = (PANEL_W - 2 * px - 3 * gap) / 4;
+      LTM_DrawButton(px,                 y, bW, BTN_H_SM, "25%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_25");
+      LTM_DrawButton(px + (bW + gap),    y, bW, BTN_H_SM, "50%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_50");
+      LTM_DrawButton(px + 2*(bW + gap),  y, bW, BTN_H_SM, "75%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_75");
+      LTM_DrawButton(px + 3*(bW + gap),  y, bW, BTN_H_SM, "80%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_80");
+   }
+   y += BTN_H_SM + 6;
+
+   // Row 2: SET BREAKEVEN — full width
+   LTM_DrawButton(px, y, PANEL_W - 2 * px, BTN_H_SM, "SET BREAKEVEN", CLR_BTN_BE, CLR_WHITE, "SET_BE");
 }
 
 //+------------------------------------------------------------------+
-//| Main draw orchestrator                                             |
+//| Manage Positions section (Step 11)                                 |
+//+------------------------------------------------------------------+
+void LTM_DrawManageSection(int yTop)
+{
+   int y  = yTop + PANEL_PAD_Y;
+   int px = PANEL_PAD_X;
+
+   g_canvas.FillRectangle(0, yTop, PANEL_W, yTop + PANEL_MANAGE_H, CLR_BG_DEEP);
+
+   // Row 1: CLOSE ALL — full width, danger color
+   LTM_DrawButton(px, y, PANEL_W - 2 * px, BTN_H_MD, "CLOSE ALL", CLR_BTN_DANGER, CLR_WHITE, "CLOSE_ALL");
+   y += BTN_H_MD + 10;
+
+   // Row 2: CLOSE BUY | CLOSE SELL
+   {
+      int gap = 4;
+      int bW  = (PANEL_W - 2 * px - gap) / 2;
+      LTM_DrawButton(px,            y, bW, BTN_H_MD, "CLOSE BUY",  CLR_PROFIT_DIM, CLR_PROFIT, "CLOSE_BUY");
+      LTM_DrawButton(px + bW + gap, y, bW, BTN_H_MD, "CLOSE SELL", CLR_LOSS_DIM,   CLR_LOSS,   "CLOSE_SELL");
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Auto Breakeven section (Step 12)                                   |
+//+------------------------------------------------------------------+
+void LTM_DrawBESection(int yTop)
+{
+   int y   = yTop + PANEL_PAD_Y;
+   int px  = PANEL_PAD_X;
+   int bPM = BTN_PLUSMINUS_W;
+   int gap = 4;
+   int lblW = 76;   // "After (pips)" / "+ Ofs (pips)"
+   int fldW = PANEL_W - px - lblW - bPM - gap - bPM - gap - px;
+
+   g_canvas.FillRectangle(0, yTop, PANEL_W, yTop + PANEL_BE_H, CLR_BG_DEEP);
+
+   // Row 1: AUTO BE toggle + label
+   {
+      bool   abeOn  = g_panel.autoBEEnabled;
+      uint   abeBg  = abeOn ? CLR_ACCENT   : CLR_AUTO_OFF;
+      uint   abeFg  = abeOn ? CLR_WHITE    : CLR_TEXT_DIM;
+      int    togW   = 44;
+
+      LTM_DrawButton(px, y, togW, FIELD_H, abeOn ? "ON" : "OFF", abeBg, abeFg, "TOGGLE_AUTO_BE");
+      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
+      g_canvas.TextOut(px + togW + 8, y + FIELD_H / 2, "AUTO BREAKEVEN", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
+   }
+   y += FIELD_H + 10;
+
+   // Row 2: After (pips) +/-
+   {
+      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
+      g_canvas.TextOut(px, y + FIELD_H / 2, "After (pips)", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
+
+      int minX  = px + lblW;
+      int fldX  = minX + bPM + gap;
+      int plusX = fldX + fldW + gap;
+
+      LTM_DrawButton(minX,  y, bPM, FIELD_H, "-", CLR_NEUTRAL, CLR_WHITE, "ABE_AFTER_MINUS");
+      LTM_DrawField (fldX,  y, fldW, FIELD_H, g_panel.autoBeAfter, FIELD_AUTO_BE_AFTER);
+      LTM_DrawButton(plusX, y, bPM, FIELD_H, "+", CLR_NEUTRAL, CLR_WHITE, "ABE_AFTER_PLUS");
+   }
+   y += FIELD_H + 10;
+
+   // Row 3: Offset (pips) +/-
+   {
+      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
+      g_canvas.TextOut(px, y + FIELD_H / 2, "+ Ofs (pips)", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
+
+      int minX  = px + lblW;
+      int fldX  = minX + bPM + gap;
+      int plusX = fldX + fldW + gap;
+
+      LTM_DrawButton(minX,  y, bPM, FIELD_H, "-", CLR_NEUTRAL, CLR_WHITE, "ABE_OFS_MINUS");
+      LTM_DrawField (fldX,  y, fldW, FIELD_H, g_panel.autoBeOfs, FIELD_AUTO_BE_OFFSET);
+      LTM_DrawButton(plusX, y, bPM, FIELD_H, "+", CLR_NEUTRAL, CLR_WHITE, "ABE_OFS_PLUS");
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Main draw orchestrator (Step 3)                                    |
 //+------------------------------------------------------------------+
 void LTM_DrawPanel()
 {
@@ -656,37 +762,72 @@ void LTM_DrawPanel()
    g_canvas.Rectangle(0, 0, PANEL_W - 1, g_panelH - 1, CLR_BORDER_GLOW);
    g_canvas.Rectangle(1, 1, PANEL_W - 2, g_panelH - 2, CLR_BORDER_DIM);
 
-   LTM_DrawTitleBar();
-
    if(g_panel.panelMinimized)
    {
-      LTM_DrawStatusBar(PANEL_TITLE_H);
+      LTM_DrawCompactMode();
+      g_canvas.Update();
+      return;
    }
-   else
+
+   int y = 0;
+
+   LTM_DrawTitleBar();
+   y += PANEL_TITLE_H;
+
+   // Account Overview (collapsible)
+   LTM_DrawSectionHeader(y, "ACCOUNT OVERVIEW", "COLLAPSE_OVERVIEW", g_panel.collapseOverview);
+   y += PANEL_SEC_H;
+   if(!g_panel.collapseOverview)
    {
-      int y = PANEL_TITLE_H;
+      LTM_DrawAccountOverview(y);
+      y += PANEL_OVERVIEW_H;
+   }
 
-      LTM_DrawDashboard(g_canvas, y);
-      y += PANEL_DASH_H;
+   // Trade Mode Tabs (always visible)
+   LTM_DrawTradeTabs(y);
+   y += PANEL_TABS_H;
 
-      LTM_DrawOrderSection(y);
-      y += PANEL_ORDER_H;
+   // Trade Input (collapsible)
+   LTM_DrawSectionHeader(y, "TRADE INPUT", "COLLAPSE_INPUT", g_panel.collapseInput);
+   y += PANEL_SEC_H;
+   if(!g_panel.collapseInput)
+   {
+      LTM_DrawTradeInput(y);
+      y += PANEL_INPUT_H + (g_panel.tabMarket ? 0 : FIELD_H + 6);
+   }
 
+   // BUY / SELL always visible
+   LTM_DrawBuySellButtons(y);
+   y += PANEL_BUYSELL_H;
+
+   // Quick Actions (collapsible)
+   LTM_DrawSectionHeader(y, "QUICK ACTIONS", "COLLAPSE_QUICK", g_panel.collapseQuick);
+   y += PANEL_SEC_H;
+   if(!g_panel.collapseQuick)
+   {
+      LTM_DrawQuickActions(y);
+      y += PANEL_QUICK_H;
+   }
+
+   // Manage Positions (collapsible)
+   LTM_DrawSectionHeader(y, "MANAGE POSITIONS", "COLLAPSE_MANAGE", g_panel.collapseManage);
+   y += PANEL_SEC_H;
+   if(!g_panel.collapseManage)
+   {
       LTM_DrawManageSection(y);
       y += PANEL_MANAGE_H;
-
-      LTM_DrawBESection(y);
-      y += PANEL_BE_H;
-
-      if(g_panel.accordionOpen)
-      {
-         LTM_DrawAccordion(y);
-         y += PANEL_ACCORD_H;
-      }
-
-      LTM_DrawStatusBar(y);
    }
 
+   // Auto Breakeven (collapsible)
+   LTM_DrawSectionHeader(y, "AUTO BREAKEVEN", "COLLAPSE_BE", g_panel.collapseBE);
+   y += PANEL_SEC_H;
+   if(!g_panel.collapseBE)
+   {
+      LTM_DrawBESection(y);
+      y += PANEL_BE_H;
+   }
+
+   LTM_DrawStatusBar(y);
    g_canvas.Update();
 }
 
@@ -828,15 +969,11 @@ void LTM_DispatchAction(const string action)
    }
    else if(action == "SET_BE")
    {
-      LTM_SetBreakeven((int)StringToInteger(g_panel.beOffset));
+      LTM_SetBreakeven((int)StringToInteger(g_panel.autoBeOfs));
    }
    else if(action == "MINIMIZE")
    {
       g_panel.panelMinimized = !g_panel.panelMinimized;
-   }
-   else if(action == "TOGGLE_ACCORD")
-   {
-      g_panel.accordionOpen = !g_panel.accordionOpen;
    }
    else if(action == "TOGGLE_LOT_MODE")
    {
@@ -850,6 +987,68 @@ void LTM_DispatchAction(const string action)
    {
       g_panel.autoBEEnabled = !g_panel.autoBEEnabled;
       ArrayResize(g_autoBEDone, 0);
+   }
+   // V2: Tab switching
+   else if(action == "TAB_MARKET")  { g_panel.tabMarket = true; }
+   else if(action == "TAB_PENDING") { g_panel.tabMarket = false; }
+   // V2: Section collapse toggles
+   else if(action == "COLLAPSE_OVERVIEW") { g_panel.collapseOverview = !g_panel.collapseOverview; }
+   else if(action == "COLLAPSE_INPUT")    { g_panel.collapseInput    = !g_panel.collapseInput;    }
+   else if(action == "COLLAPSE_QUICK")    { g_panel.collapseQuick    = !g_panel.collapseQuick;    }
+   else if(action == "COLLAPSE_MANAGE")   { g_panel.collapseManage   = !g_panel.collapseManage;   }
+   else if(action == "COLLAPSE_BE")       { g_panel.collapseBE       = !g_panel.collapseBE;       }
+   // V2: +/- buttons for Lot
+   else if(action == "LOT_PLUS")
+   {
+      double v = StringToDouble(g_panel.lotValue) + 0.01;
+      g_panel.lotValue = DoubleToString(MathMax(0.01, v), 2);
+   }
+   else if(action == "LOT_MINUS")
+   {
+      double v = StringToDouble(g_panel.lotValue) - 0.01;
+      g_panel.lotValue = DoubleToString(MathMax(0.01, v), 2);
+   }
+   // V2: +/- buttons for SL
+   else if(action == "SL_PLUS" || action == "SL_MINUS")
+   {
+      double step = g_panel.slTpModePips
+                    ? 1.0
+                    : SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE) * 10.0;
+      double v = StringToDouble(g_panel.slValue);
+      v += (action == "SL_PLUS") ? step : -step;
+      if(v < 0.0) v = 0.0;
+      g_panel.slValue = g_panel.slTpModePips
+                        ? DoubleToString(v, 0)
+                        : DoubleToString(v, _Digits);
+   }
+   // V2: +/- buttons for TP
+   else if(action == "TP_PLUS" || action == "TP_MINUS")
+   {
+      double step = g_panel.slTpModePips
+                    ? 1.0
+                    : SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE) * 10.0;
+      double v = StringToDouble(g_panel.tpValue);
+      v += (action == "TP_PLUS") ? step : -step;
+      if(v < 0.0) v = 0.0;
+      g_panel.tpValue = g_panel.slTpModePips
+                        ? DoubleToString(v, 0)
+                        : DoubleToString(v, _Digits);
+   }
+   // V2: +/- buttons for Auto BE After
+   else if(action == "ABE_AFTER_PLUS" || action == "ABE_AFTER_MINUS")
+   {
+      double v = StringToDouble(g_panel.autoBeAfter);
+      v += (action == "ABE_AFTER_PLUS") ? 1.0 : -1.0;
+      if(v < 0.0) v = 0.0;
+      g_panel.autoBeAfter = DoubleToString(v, 0);
+   }
+   // V2: +/- buttons for Auto BE Offset
+   else if(action == "ABE_OFS_PLUS" || action == "ABE_OFS_MINUS")
+   {
+      double v = StringToDouble(g_panel.autoBeOfs);
+      v += (action == "ABE_OFS_PLUS") ? 1.0 : -1.0;
+      if(v < 0.0) v = 0.0;
+      g_panel.autoBeOfs = DoubleToString(v, 0);
    }
 
    LTM_DrawPanel();
@@ -911,7 +1110,7 @@ void LTM_HandleKey(int keyCode, const string sparam)
       }
       if(keyCode == 70 && g_panel.activeField == FIELD_NONE) // F → SET BREAKEVEN
       {
-         LTM_SetBreakeven((int)StringToInteger(g_panel.beOffset));
+         LTM_SetBreakeven((int)StringToInteger(g_panel.autoBeOfs));
          LTM_DrawPanel();
          return;
       }
