@@ -484,8 +484,8 @@ void LTM_DrawCompactMode()
 
    // BUY / SELL buttons
    int gap = 4, bW = (PANEL_W - 2 * px - gap) / 2;
-   LTM_DrawButton(px,          y, bW, BTN_H_LG, "BUY",  CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY");
-   LTM_DrawButton(px + bW + gap, y, bW, BTN_H_LG, "SELL", CLR_LOSS,   CLR_WHITE,       "SELL");
+   LTM_DrawButton(px,            y, bW, BTN_H_LG, "↑ BUY",  CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY");
+   LTM_DrawButton(px + bW + gap, y, bW, BTN_H_LG, "↓ SELL", CLR_LOSS,   CLR_WHITE,       "SELL");
    y += BTN_H_LG;
 
    LTM_DrawStatusBar(y);
@@ -640,13 +640,13 @@ void LTM_DrawBuySellButtons(int yTop)
 
    if(g_panel.tabMarket)
    {
-      LTM_DrawButton(px,             yTop, bW, BTN_H_LG, "BUY",       CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY");
-      LTM_DrawButton(px + bW + gap,  yTop, bW, BTN_H_LG, "SELL",      CLR_LOSS,   CLR_WHITE,       "SELL");
+      LTM_DrawButton(px,             yTop, bW, BTN_H_LG, "↑ BUY",        CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY");
+      LTM_DrawButton(px + bW + gap,  yTop, bW, BTN_H_LG, "↓ SELL",       CLR_LOSS,   CLR_WHITE,       "SELL");
    }
    else
    {
-      LTM_DrawButton(px,             yTop, bW, BTN_H_LG, "BUY LIMIT",  CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY_LIMIT");
-      LTM_DrawButton(px + bW + gap,  yTop, bW, BTN_H_LG, "SELL LIMIT", CLR_LOSS,   CLR_WHITE,       "SELL_LIMIT");
+      LTM_DrawButton(px,             yTop, bW, BTN_H_LG, "↑ BUY LIMIT",  CLR_PROFIT, CLR_BTN_TEXT_DK, "BUY_LIMIT");
+      LTM_DrawButton(px + bW + gap,  yTop, bW, BTN_H_LG, "↓ SELL LIMIT", CLR_LOSS,   CLR_WHITE,       "SELL_LIMIT");
    }
 }
 
@@ -655,21 +655,31 @@ void LTM_DrawBuySellButtons(int yTop)
 //+------------------------------------------------------------------+
 void LTM_DrawQuickActions(int yTop)
 {
-   int y  = yTop + 6;
+   int y  = yTop + PANEL_PAD_Y;
    int px = PANEL_PAD_X;
 
    g_canvas.FillRectangle(0, yTop, PANEL_W, yTop + PANEL_QUICK_H, CLR_BG_DEEP);
+
+   // Sub-label
+   g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
+   g_canvas.TextOut(px, y, "PARTIAL CLOSE - QUICK %", CLR_TEXT_DIM, TA_LEFT | TA_TOP);
+   y += 14;
 
    // Row 1: 25% | 50% | 75% | 80%
    {
       int gap = 4;
       int bW  = (PANEL_W - 2 * px - 3 * gap) / 4;
-      LTM_DrawButton(px,                 y, bW, BTN_H_SM, "25%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_25");
-      LTM_DrawButton(px + (bW + gap),    y, bW, BTN_H_SM, "50%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_50");
-      LTM_DrawButton(px + 2*(bW + gap),  y, bW, BTN_H_SM, "75%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_75");
-      LTM_DrawButton(px + 3*(bW + gap),  y, bW, BTN_H_SM, "80%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_80");
+      LTM_DrawButton(px,                y, bW, BTN_H_SM, "25%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_25");
+      LTM_DrawButton(px + (bW+gap),     y, bW, BTN_H_SM, "50%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_50");
+      LTM_DrawButton(px + 2*(bW+gap),   y, bW, BTN_H_SM, "75%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_75");
+      LTM_DrawButton(px + 3*(bW+gap),   y, bW, BTN_H_SM, "80%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_80");
    }
-   y += BTN_H_SM + 6;
+   y += BTN_H_SM + 10;
+
+   // Sub-label
+   g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
+   g_canvas.TextOut(px, y, "SET BREAKEVEN", CLR_TEXT_DIM, TA_LEFT | TA_TOP);
+   y += 14;
 
    // Row 2: SET BREAKEVEN — full width
    LTM_DrawButton(px, y, PANEL_W - 2 * px, BTN_H_SM, "SET BREAKEVEN", CLR_BTN_BE, CLR_WHITE, "SET_BE");
