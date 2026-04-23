@@ -51,7 +51,7 @@
 #define PANEL_COMPACT_H   145  // compact mode total height
 #define PANEL_OVERVIEW_H  80   // 2-row account grid (3-line col + PAD_Y=10)
 #define PANEL_TABS_H      36   // MARKET/PENDING tab bar
-#define PANEL_INPUT_H     122  // 4 rows: lot + sl/tp + price + margin
+#define PANEL_INPUT_H     118  // label+lot + label+sltp side-by-side + PAD_Y
 #define PANEL_BUYSELL_H   56   // BUY/SELL buttons (always visible)
 #define PANEL_QUICK_H     122  // sub-lbl + 28 partial row + sub-lbl + 28 SET BE + PAD_Y
 #define PANEL_MANAGE_H    100  // PAD_Y + 34 CLOSE ALL + 10 + 34 CLOSE BUY/SELL
@@ -164,7 +164,7 @@ void LTM_CreateCanvas()
    }
    else
    {
-      int inputH = PANEL_INPUT_H + (g_panel.tabMarket ? 0 : FIELD_H + 6);
+      int inputH = PANEL_INPUT_H + (g_panel.tabMarket ? 0 : FIELD_H + 18);
       totalH = PANEL_TITLE_H
              + PANEL_SEC_H + (g_panel.collapseOverview ? 0 : PANEL_OVERVIEW_H)
              + PANEL_TABS_H
@@ -554,76 +554,63 @@ void LTM_DrawTradeTabs(int yTop)
 //+------------------------------------------------------------------+
 void LTM_DrawTradeInput(int yTop)
 {
-   int y    = yTop + 6;
-   int px   = PANEL_PAD_X;
-   int bPM  = BTN_PLUSMINUS_W;   // 24 — +/- button width
-   int gap  = 4;
-   int lblW = 30;                 // row label width
-   int togW = 52;                 // toggle button width
-   // field fills remaining space
-   int fldW = PANEL_W - px - lblW - bPM - gap - bPM - gap - togW - gap - px;
+   int y       = yTop + PANEL_PAD_Y;
+   int px      = PANEL_PAD_X;
+   int gap     = 4;
+   int bPM     = BTN_PLUSMINUS_W;   // 24px +/- buttons
+   int toggleW = 52;                 // FIXED/RISK% toggle
+   int halfW   = (PANEL_W - 2*px - gap) / 2;         // ~187px per SL/TP column
+   int fldSLTP = halfW - 2*bPM - 2*gap;              // SL or TP field width
+   int fldLot  = PANEL_W - 2*px - 2*bPM - 3*gap - toggleW;
 
-   g_canvas.FillRectangle(0, yTop, PANEL_W, yTop + PANEL_INPUT_H + (g_panel.tabMarket ? 0 : FIELD_H + 6), CLR_BG_DEEP);
+   g_canvas.FillRectangle(0, yTop, PANEL_W, yTop + PANEL_INPUT_H + (g_panel.tabMarket ? 0 : FIELD_H + 18), CLR_BG_DEEP);
 
-   // Row 1: Lot / Risk% with +/- and mode toggle
+   // Row A: "Lot Size" label
+   g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
+   g_canvas.TextOut(px, y, "Lot Size", CLR_TEXT_DIM, TA_LEFT | TA_TOP);
+   y += 14;
+
+   // Row B: [ - ][ lot field ][ + ][ FIXED/RISK% ]
+   LTM_DrawButton(px,                            y, bPM,    FIELD_H, "-",   CLR_NEUTRAL, CLR_WHITE, "LOT_MINUS");
+   LTM_DrawField (px + bPM + gap,                y, fldLot, FIELD_H, g_panel.lotValue, FIELD_LOT);
+   LTM_DrawButton(px + bPM + gap + fldLot + gap, y, bPM,    FIELD_H, "+",   CLR_NEUTRAL, CLR_WHITE, "LOT_PLUS");
    {
-      string lotLbl = g_panel.lotModeRisk ? "Risk%" : "Lot";
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(px, y + FIELD_H / 2, lotLbl, CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-
-      int minX  = px + lblW;
-      int fldX  = minX + bPM + gap;
-      int plusX = fldX + fldW + gap;
-      int togX  = plusX + bPM + gap;
-
-      LTM_DrawButton(minX, y, bPM,  FIELD_H, "-",   CLR_NEUTRAL,  CLR_WHITE,    "LOT_MINUS");
-      LTM_DrawField (fldX, y, fldW, FIELD_H, g_panel.lotValue, FIELD_LOT);
-      LTM_DrawButton(plusX, y, bPM, FIELD_H, "+",   CLR_NEUTRAL,  CLR_WHITE,    "LOT_PLUS");
       string tLbl = g_panel.lotModeRisk ? "RISK%" : "FIXED";
-      LTM_DrawButton(togX,  y, togW, FIELD_H, tLbl, CLR_AUTO_OFF, CLR_TEXT_DIM, "TOGGLE_LOT_MODE");
+      uint   tBg  = g_panel.lotModeRisk ? CLR_ACCENT : CLR_AUTO_OFF;
+      LTM_DrawButton(PANEL_W - px - toggleW, y, toggleW, FIELD_H, tLbl, tBg, CLR_WHITE, "TOGGLE_LOT_MODE");
    }
-   y += FIELD_H + 6;
+   y += FIELD_H + 10;
 
-   // Row 2: SL with +/- and pips/price toggle
+   // Row C: "SL (pips/price)" | "TP (pips/price)" + toggle small
+   string modeStr = g_panel.slTpModePips ? "pips" : "price";
+   g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
+   g_canvas.TextOut(px,               y, "SL (" + modeStr + ")", CLR_TEXT_DIM, TA_LEFT | TA_TOP);
+   g_canvas.TextOut(px + halfW + gap,  y, "TP (" + modeStr + ")", CLR_TEXT_DIM, TA_LEFT | TA_TOP);
+   LTM_DrawButton(PANEL_W - px - 40, y, 40, 14, modeStr, CLR_NEUTRAL, CLR_TEXT_DIM, "TOGGLE_SLTP_MODE");
+   y += 14 + gap;
+
+   // Row D: [ - ][SL][ + ]  [ - ][TP][ + ]
    {
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(px, y + FIELD_H / 2, "SL", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
+      int xSL = px;
+      int xTP = px + halfW + gap;
+      LTM_DrawButton(xSL,                              y, bPM,     FIELD_H, "-", CLR_NEUTRAL, CLR_WHITE, "SL_MINUS");
+      LTM_DrawField (xSL + bPM + gap,                  y, fldSLTP, FIELD_H, g_panel.slValue, FIELD_SL);
+      LTM_DrawButton(xSL + bPM + gap + fldSLTP + gap,  y, bPM,     FIELD_H, "+", CLR_NEUTRAL, CLR_WHITE, "SL_PLUS");
 
-      int minX  = px + lblW;
-      int fldX  = minX + bPM + gap;
-      int plusX = fldX + fldW + gap;
-      int togX  = plusX + bPM + gap;
-
-      LTM_DrawButton(minX, y, bPM,  FIELD_H, "-",   CLR_NEUTRAL,  CLR_WHITE,    "SL_MINUS");
-      LTM_DrawField (fldX, y, fldW, FIELD_H, g_panel.slValue, FIELD_SL);
-      LTM_DrawButton(plusX, y, bPM, FIELD_H, "+",   CLR_NEUTRAL,  CLR_WHITE,    "SL_PLUS");
-      string modeLbl = g_panel.slTpModePips ? "pips" : "price";
-      LTM_DrawButton(togX,  y, togW, FIELD_H, modeLbl, CLR_AUTO_OFF, CLR_TEXT_DIM, "TOGGLE_SLTP_MODE");
+      LTM_DrawButton(xTP,                              y, bPM,     FIELD_H, "-", CLR_NEUTRAL, CLR_WHITE, "TP_MINUS");
+      LTM_DrawField (xTP + bPM + gap,                  y, fldSLTP, FIELD_H, g_panel.tpValue, FIELD_TP);
+      LTM_DrawButton(xTP + bPM + gap + fldSLTP + gap,  y, bPM,     FIELD_H, "+", CLR_NEUTRAL, CLR_WHITE, "TP_PLUS");
    }
-   y += FIELD_H + 6;
+   y += FIELD_H + gap;
 
-   // Row 3: TP with +/- (same field width, no toggle on right)
-   {
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(px, y + FIELD_H / 2, "TP", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-
-      int minX  = px + lblW;
-      int fldX  = minX + bPM + gap;
-      int plusX = fldX + fldW + gap;
-
-      LTM_DrawButton(minX, y, bPM,  FIELD_H, "-", CLR_NEUTRAL, CLR_WHITE, "TP_MINUS");
-      LTM_DrawField (fldX, y, fldW, FIELD_H, g_panel.tpValue, FIELD_TP);
-      LTM_DrawButton(plusX, y, bPM, FIELD_H, "+", CLR_NEUTRAL, CLR_WHITE, "TP_PLUS");
-   }
-   y += FIELD_H + 6;
-
-   // Row 4: Price (PENDING mode only)
+   // Row E: Price (PENDING mode only)
    if(!g_panel.tabMarket)
    {
-      g_canvas.FontSet(FONT_LABEL, FSIZE_LABEL, FW_NORMAL, 0);
-      g_canvas.TextOut(px, y + FIELD_H / 2, "Price", CLR_TEXT_DIM, TA_LEFT | TA_VCENTER);
-      int priceFieldW = PANEL_W - px - lblW - px;
-      LTM_DrawField(px + lblW, y, priceFieldW, FIELD_H, g_panel.pendingPrice, FIELD_PENDING_PRICE);
+      y += 2;
+      g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
+      g_canvas.TextOut(px, y, "Price", CLR_TEXT_DIM, TA_LEFT | TA_TOP);
+      y += 14;
+      LTM_DrawField(px, y, PANEL_W - 2*px, FIELD_H, g_panel.pendingPrice, FIELD_PENDING_PRICE);
    }
 }
 
