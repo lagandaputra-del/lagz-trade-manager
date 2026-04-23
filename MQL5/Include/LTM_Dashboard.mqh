@@ -140,14 +140,14 @@ void LTM_DrawAccountOverview(int yTop)
       g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
       g_canvas.TextOut(cx, row1Y,      colLabels[c], CLR_TEXT_DIM, TA_LEFT | TA_TOP);
       g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_VALUE, FW_BOLD, 0);
-      g_canvas.TextOut(cx, row1Y + 13, colVals[c],   colClrs[c],   TA_LEFT | TA_TOP);
+      g_canvas.TextOut(cx, row1Y + 15, colVals[c],   colClrs[c],   TA_LEFT | TA_TOP);
       g_canvas.FontSet(FONT_LABEL, FSIZE_SECTION, FW_NORMAL, 0);
       if(c < 3)
-         g_canvas.TextOut(cx, row1Y + 27, "USD", CLR_TEXT_DIM, TA_LEFT | TA_TOP);
+         g_canvas.TextOut(cx, row1Y + 33, "USD", CLR_TEXT_DIM, TA_LEFT | TA_TOP);
       else
       {
          string todUSD = todSign + DoubleToString(profitToday, 2);
-         g_canvas.TextOut(cx, row1Y + 27, "(" + todUSD + ")", todClr, TA_LEFT | TA_TOP);
+         g_canvas.TextOut(cx, row1Y + 33, "(" + todUSD + ")", todClr, TA_LEFT | TA_TOP);
       }
    }
 
