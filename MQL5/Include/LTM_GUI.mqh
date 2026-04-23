@@ -455,15 +455,21 @@ void LTM_DrawCompactMode()
       runPL += PositionGetDouble(POSITION_PROFIT) + PositionGetDouble(POSITION_SWAP);
    }
 
-   string colLabels[] = {"Bal", "Eq", "Free", "PNL"};
+   double profitToday    = balance + runPL - g_dayStartBalance;
+   double profitTodayPct = (g_dayStartBalance > 0.0)
+                           ? (profitToday / g_dayStartBalance * 100.0)
+                           : 0.0;
+   string todSign = (profitToday >= 0) ? "+" : "";
+
+   string colLabels[] = {"Bal", "Eq", "Free", "PNL Hari"};
    string colVals[]   = {
       DoubleToString(balance, 2),
       DoubleToString(equity, 2),
       DoubleToString(freeMargin, 2),
-      (runPL >= 0 ? "+" : "") + DoubleToString(runPL, 2)
+      todSign + DoubleToString(profitTodayPct, 1) + "%"
    };
-   uint plClr = (runPL >= 0) ? CLR_PROFIT : CLR_LOSS;
-   uint colClrs[] = {CLR_TEXT_PRIMARY, CLR_TEXT_PRIMARY, CLR_TEXT_PRIMARY, plClr};
+   uint todClr  = (profitToday >= 0) ? CLR_PROFIT : CLR_LOSS;
+   uint colClrs[] = {CLR_TEXT_PRIMARY, CLR_TEXT_PRIMARY, CLR_TEXT_PRIMARY, todClr};
 
    int colW = (PANEL_W - 2 * px) / 4;
    for(int c = 0; c < 4; c++)
