@@ -352,10 +352,10 @@ void LTM_DrawSectionHeader(int y, const string label, const string action, bool 
 
 void LTM_DrawButton(int x, int y, int w, int h,
                     const string label, uint bg, uint fg,
-                    const string action)
+                    const string action, uint border = CLR_BORDER_DIM)
 {
    g_canvas.FillRectangle(x, y, x + w, y + h, bg);
-   g_canvas.Rectangle(x, y, x + w, y + h, CLR_BORDER_DIM);
+   g_canvas.Rectangle(x, y, x + w, y + h, border);
    g_canvas.FontSet(FONT_LABEL_BOLD, FSIZE_BTN, FW_BOLD, 0);
    g_canvas.TextOut(x + w / 2, y + h / 2, label, fg, TA_CENTER | TA_VCENTER);
    LTM_HitRegionAdd(x, y, x + w, y + h, action);
@@ -656,10 +656,10 @@ void LTM_DrawQuickActions(int yTop)
    {
       int gap = 4;
       int bW  = (PANEL_W - 2 * px - 3 * gap) / 4;
-      LTM_DrawButton(px,                y, bW, BTN_H_SM, "25%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_25");
-      LTM_DrawButton(px + (bW+gap),     y, bW, BTN_H_SM, "50%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_50");
-      LTM_DrawButton(px + 2*(bW+gap),   y, bW, BTN_H_SM, "75%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_75");
-      LTM_DrawButton(px + 3*(bW+gap),   y, bW, BTN_H_SM, "80%", CLR_WARN, CLR_BTN_TEXT_DK, "PARTIAL_80");
+      LTM_DrawButton(px,                y, bW, BTN_H_SM, "25%", CLR_NEUTRAL, CLR_WARN, "PARTIAL_25", CLR_WARN);
+      LTM_DrawButton(px + (bW+gap),     y, bW, BTN_H_SM, "50%", CLR_NEUTRAL, CLR_WARN, "PARTIAL_50", CLR_WARN);
+      LTM_DrawButton(px + 2*(bW+gap),   y, bW, BTN_H_SM, "75%", CLR_NEUTRAL, CLR_WARN, "PARTIAL_75", CLR_WARN);
+      LTM_DrawButton(px + 3*(bW+gap),   y, bW, BTN_H_SM, "80%", CLR_NEUTRAL, CLR_WARN, "PARTIAL_80", CLR_WARN);
    }
    y += BTN_H_SM + 10;
 
@@ -690,8 +690,8 @@ void LTM_DrawManageSection(int yTop)
    {
       int gap = 4;
       int bW  = (PANEL_W - 2 * px - gap) / 2;
-      LTM_DrawButton(px,            y, bW, BTN_H_MD, "CLOSE BUY",  CLR_PROFIT_DIM, CLR_PROFIT, "CLOSE_BUY");
-      LTM_DrawButton(px + bW + gap, y, bW, BTN_H_MD, "CLOSE SELL", CLR_LOSS_DIM,   CLR_LOSS,   "CLOSE_SELL");
+      LTM_DrawButton(px,            y, bW, BTN_H_MD, "CLOSE BUY",  CLR_PROFIT_DIM, CLR_PROFIT, "CLOSE_BUY",  CLR_PROFIT);
+      LTM_DrawButton(px + bW + gap, y, bW, BTN_H_MD, "CLOSE SELL", CLR_LOSS_DIM,   CLR_LOSS,   "CLOSE_SELL", CLR_LOSS);
    }
 }
 
@@ -712,7 +712,7 @@ void LTM_DrawBESection(int yTop)
    // Row 1: AUTO BE toggle + label
    {
       bool   abeOn  = g_panel.autoBEEnabled;
-      uint   abeBg  = abeOn ? CLR_ACCENT   : CLR_AUTO_OFF;
+      uint   abeBg  = abeOn ? CLR_PROFIT   : CLR_AUTO_OFF;
       uint   abeFg  = abeOn ? CLR_WHITE    : CLR_TEXT_DIM;
       int    togW   = 44;
 
